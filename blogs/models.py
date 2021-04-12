@@ -28,8 +28,8 @@ class Comments(models.Model):
         ordering = ['created_at']
         verbose_name_plural = 'Comments'
 
-    def __str__(self):
-        return self.name
+    def __all__(self):
+        return self.user
 
 class Likes(models.Model):
     id             = models.UUIDField(db_index=True, default=uuid.uuid4, primary_key=True, unique=True)
@@ -41,6 +41,6 @@ class Likes(models.Model):
         ordering = ['created_at']
         verbose_name_plural='Likes'
 
-    def __str__(self):
-        return self.name
+    def __all__(self):
+        return self.user
 
