@@ -2,17 +2,8 @@ from rest_framework import pagination
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import SearchFilter
 
-class BlogsFilterMixin:
+class BaseFilterMixin:
     search_fields = ['title', 'content']
-    filter_backends = (SearchFilter, )
-
-    def filter_queryset(self, queryset):
-        for backend in list(self.filter_backends):
-            queryset = backend().filter_queryset(self.request, queryset, self)
-        return queryset
-
-class CommentsFilterMixin:
-    search_fields = ['comments']
     filter_backends = (SearchFilter, )
 
     def filter_queryset(self, queryset):
