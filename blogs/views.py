@@ -1,20 +1,32 @@
 from django.shortcuts import render
+from django.contrib.sites.shortcuts import get_current_site
 from blogs.models import Blogs, Comments, Likes, Tags
 from blogs.serializers import BlogsSerializer, CommentsSerializer, LikesSerializer, TagsSerializer
 from blogs.mixins import PaginationHandlerMixin, BaseFilterMixin
+from blogs.path import file_path
 from rest_framework import status, permissions, exceptions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
+import os, json
 
 class BaseView(APIView, PaginationHandlerMixin, BaseFilterMixin):
     permission_classes  = [permissions.IsAuthenticated]
     pagination_class    = PageNumberPagination
     
     def post(self, request):
-        user = request.data
-        serializers = self.serializer_class(data={**user, **{'user':request.user.pk}})
+        absurl = get_current_site(request).domain 
+        path = 'http://' + absurl + '/' + file_path(request)
+        _tags = request.data['tags']
+        tags = json.loads(_tags)
+
+        serializers = self.serializer_class(data={**{'user':request.user.pk,
+                                                    'media_file':path,
+                                                    'title':request.data['title'],
+                                                    'content':request.data['content'],
+                                                    'tags':tags,
+                                                    }})
         serializers.is_valid(raise_exception=True)
         serializers.save()
 
@@ -36,7 +48,6 @@ class BaseView(APIView, PaginationHandlerMixin, BaseFilterMixin):
 
 class LikeCommentView(APIView):
     permission_classes  = [permissions.IsAuthenticated]
-    pagination_class    = PageNumberPagination
 
     def post(self, request, pk):
         user = request.data
@@ -58,7 +69,6 @@ class LikeCommentView(APIView):
 class BlogsView(BaseView):
     serializer_class   = BlogsSerializer
     model_class        = Blogs
-    # search_fields      = ['title', 'content']
 
 class CommentsView(LikeCommentView):
     serializer_class    = CommentsSerializer

@@ -8,11 +8,11 @@ class TagsSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 class BlogsSerializer(serializers.ModelSerializer):
-    tags = TagsSerializer(many=True)
+    tags = TagsSerializer(required=False, many=True)
 
     class Meta:
         model = Blogs
-        fields = ['id', 'user', 'title', 'content', 'tags', 'created_at', 'updated_at']
+        fields = ['id', 'user', 'title', 'content', 'tags', 'media_file', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         _tags = validated_data.pop("tags", [])

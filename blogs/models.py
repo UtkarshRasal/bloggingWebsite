@@ -20,6 +20,7 @@ class Blogs(models.Model):
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
     tags            = models.ManyToManyField(Tags)
+    media_file      = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -40,7 +41,7 @@ class Comments(models.Model):
         verbose_name_plural = 'Comments'
 
     def __all__(self):
-        return self.id
+        return self.id 
 
 class Likes(models.Model):
     id              = models.UUIDField(db_index=True, default=uuid.uuid4, primary_key=True, unique=True)
