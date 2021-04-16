@@ -26,7 +26,19 @@ class BlogsSerializer(serializers.ModelSerializer):
         _blog.tags.set(tag_list)
 
         return _blog
-        
+
+    def update(self, instance, validated_data):
+        _tags = validated_data.pop("tags", [])
+        tag_list = []
+        for tag in _tags:
+            _tag, _ = Tags.objects.get_or_create(**tag)
+            tag_list.append(_tag.pk)
+        instance.tags.clear()
+        instance.tags.set(tag_list)
+
+        return super(BlogSerializer,
+                     self).update(instance, validated_data)
+                
 class CommentsSerializer(serializers.ModelSerializer):
 
     class Meta:
